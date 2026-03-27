@@ -40,6 +40,9 @@ ngrok-qr
 
 # Custom port
 ngrok-qr 8080
+
+# Local app running on HTTPS
+ngrok-qr 3000 --https
 ```
 
 Your terminal will display the public URL and a QR code you can scan with your phone:

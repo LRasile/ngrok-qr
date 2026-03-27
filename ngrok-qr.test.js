@@ -1,17 +1,43 @@
 const axios = require("axios");
 const qrcode = require("qrcode-terminal");
-const { getPublicUrl, printQr, parsePort } = require("./ngrok-qr");
+const { getPublicUrl, printQr, parseArgs, buildNgrokTarget } = require("./ngrok-qr");
 
 jest.mock("axios");
 jest.mock("qrcode-terminal");
 
-describe("parsePort", () => {
-  test("defaults to 3000 when no arg given", () => {
-    expect(parsePort(["node", "ngrok-qr.js"])).toBe("3000");
+describe("parseArgs", () => {
+  test("defaults to port 3000 with no args", () => {
+    expect(parseArgs(["node", "ngrok-qr.js"])).toEqual({ port: "3000", secure: false });
   });
 
-  test("uses the provided port argument", () => {
-    expect(parsePort(["node", "ngrok-qr.js", "8080"])).toBe("8080");
+  test("parses a custom port", () => {
+    expect(parseArgs(["node", "ngrok-qr.js", "8080"])).toEqual({ port: "8080", secure: false });
+  });
+
+  test("parses --https flag", () => {
+    expect(parseArgs(["node", "ngrok-qr.js", "--https"])).toEqual({ port: "3000", secure: true });
+  });
+
+  test("parses port and --https together", () => {
+    expect(parseArgs(["node", "ngrok-qr.js", "8080", "--https"])).toEqual({ port: "8080", secure: true });
+  });
+
+  test("parses --https before port", () => {
+    expect(parseArgs(["node", "ngrok-qr.js", "--https", "8080"])).toEqual({ port: "8080", secure: true });
+  });
+});
+
+describe("buildNgrokTarget", () => {
+  test("returns just the port for HTTP", () => {
+    expect(buildNgrokTarget("3000", false)).toBe("3000");
+  });
+
+  test("returns full https URL for HTTPS", () => {
+    expect(buildNgrokTarget("3000", true)).toBe("https://localhost:3000");
+  });
+
+  test("uses the correct port in HTTPS target", () => {
+    expect(buildNgrokTarget("8080", true)).toBe("https://localhost:8080");
   });
 });
 

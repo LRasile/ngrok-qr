@@ -33,16 +33,25 @@ function printQr(url) {
   });
 }
 
-function parsePort(argv) {
-  return argv[2] || "3000";
+function parseArgs(argv) {
+  const args = argv.slice(2);
+  const secure = args.includes("--https");
+  const port = args.find((a) => !a.startsWith("--")) || "3000";
+  return { port, secure };
+}
+
+function buildNgrokTarget(port, secure) {
+  return secure ? `https://localhost:${port}` : port;
 }
 
 // Only run when executed directly, not when required in tests
 if (require.main === module) {
-  const port = parsePort(process.argv);
-  console.log(`Starting ngrok on port ${port}...`);
+  const { port, secure } = parseArgs(process.argv);
+  const target = buildNgrokTarget(port, secure);
 
-  const ngrok = spawn("ngrok", ["http", port], {
+  console.log(`Starting ngrok on ${secure ? "https" : "http"}://localhost:${port}...`);
+
+  const ngrok = spawn("ngrok", ["http", target], {
     stdio: ["ignore", "ignore", "pipe"],
   });
 
@@ -77,4 +86,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { getPublicUrl, printQr, parsePort };
+module.exports = { getPublicUrl, printQr, parseArgs, buildNgrokTarget };
