@@ -2,20 +2,14 @@
 
 Starts an [ngrok](https://ngrok.com) tunnel and instantly prints a scannable QR code in your terminal — no browser needed.
 
-![Example output showing a QR code printed in the terminal alongside the ngrok URL](https://placehold.co/600x200?text=QR+code+appears+here+in+your+terminal)
+## Setting up ngrok
+
+This tool requires ngrok to be installed and authenticated. See the [ngrok getting started guide](https://ngrok.com/docs/getting-started/) for full setup instructions.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org) v14+
-- [ngrok](https://ngrok.com/download) installed and authenticated
-
-If you haven't authenticated ngrok yet:
-
-```bash
-ngrok authtoken <your-token>
-```
-
-Get your token from the [ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken).
+- ngrok installed and authenticated
 
 ## Installation
 
